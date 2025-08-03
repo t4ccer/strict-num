@@ -113,7 +113,7 @@ impl FiniteF32 {
     ///
     /// Returns [`None`] for `NaN` and infinity.
     #[inline]
-    pub fn new(n: f32) -> Option<Self> {
+    pub const fn new(n: f32) -> Option<Self> {
         if n.is_finite() {
             Some(FiniteF32(n))
         } else {
@@ -196,7 +196,7 @@ impl FiniteF64 {
     ///
     /// Returns [`None`] for `NaN` and infinity.
     #[inline]
-    pub fn new(n: f64) -> Option<Self> {
+    pub const fn new(n: f64) -> Option<Self> {
         if n.is_finite() {
             Some(FiniteF64(n))
         } else {
@@ -280,7 +280,7 @@ impl PositiveF32 {
     ///
     /// Returns [`None`] for negative, `NaN` and infinity.
     #[inline]
-    pub fn new(n: f32) -> Option<Self> {
+    pub const fn new(n: f32) -> Option<Self> {
         if n.is_finite() && n >= 0.0 {
             Some(PositiveF32(FiniteF32(n)))
         } else {
@@ -334,7 +334,7 @@ impl PositiveF64 {
     ///
     /// Returns [`None`] for negative, `NaN` and infinity.
     #[inline]
-    pub fn new(n: f64) -> Option<Self> {
+    pub const fn new(n: f64) -> Option<Self> {
         if n.is_finite() && n >= 0.0 {
             Some(PositiveF64(FiniteF64(n)))
         } else {
@@ -385,7 +385,7 @@ impl NonZeroPositiveF32 {
     ///
     /// Returns [`None`] for negative, zero, `NaN` and infinity.
     #[inline]
-    pub fn new(n: f32) -> Option<Self> {
+    pub const fn new(n: f32) -> Option<Self> {
         if n.is_finite() && n > 0.0 {
             Some(NonZeroPositiveF32(FiniteF32(n)))
         } else {
@@ -436,7 +436,7 @@ impl NonZeroPositiveF64 {
     ///
     /// Returns [`None`] for negative, zero, NaN and infinity.
     #[inline]
-    pub fn new(n: f64) -> Option<Self> {
+    pub const fn new(n: f64) -> Option<Self> {
         if n.is_finite() && n > 0.0 {
             Some(NonZeroPositiveF64(FiniteF64(n)))
         } else {
@@ -490,8 +490,8 @@ impl NormalizedF32 {
 
     /// Creates a [`NormalizedF32`] if the given value is in a 0..=1 range.
     #[inline]
-    pub fn new(n: f32) -> Option<Self> {
-        if n.is_finite() && (0.0..=1.0).contains(&n) {
+    pub const fn new(n: f32) -> Option<Self> {
+        if n.is_finite() && 0.0 <= n && n <= 1.0 {
             Some(NormalizedF32(FiniteF32(n)))
         } else {
             None
@@ -522,14 +522,14 @@ impl NormalizedF32 {
 
     /// Creates a [`NormalizedF32`] by dividing the given value by 255.
     #[inline]
-    pub fn new_u8(n: u8) -> Self {
-        NormalizedF32(FiniteF32(f32::from(n) / 255.0))
+    pub const fn new_u8(n: u8) -> Self {
+        NormalizedF32(FiniteF32(n as f32 / 255.0))
     }
 
     /// Creates a [`NormalizedF64`] by dividing the given value by 65535.
     #[inline]
-    pub fn new_u16(n: u16) -> Self {
-        NormalizedF32(FiniteF32(f32::from(n) / 65535.0))
+    pub const fn new_u16(n: u16) -> Self {
+        NormalizedF32(FiniteF32(n as f32 / 65535.0))
     }
 
     /// Returns the value as a primitive type.
@@ -546,13 +546,13 @@ impl NormalizedF32 {
 
     /// Returns the value as a [`u8`].
     #[inline]
-    pub fn to_u8(&self) -> u8 {
+    pub const fn to_u8(&self) -> u8 {
         ((self.0).0 * 255.0 + 0.5) as u8
     }
 
     /// Returns the value as a [`u16`].
     #[inline]
-    pub fn to_u16(&self) -> u16 {
+    pub const fn to_u16(&self) -> u16 {
         ((self.0).0 * 65535.0 + 0.5) as u16
     }
 }
@@ -589,8 +589,8 @@ impl NormalizedF64 {
 
     /// Creates a [`NormalizedF64`] if the given value is in a 0..=1 range.
     #[inline]
-    pub fn new(n: f64) -> Option<Self> {
-        if (0.0..=1.0).contains(&n) {
+    pub const fn new(n: f64) -> Option<Self> {
+        if 0.0 <= n && n <= 1.0 {
             Some(NormalizedF64(FiniteF64(n)))
         } else {
             None
@@ -621,14 +621,14 @@ impl NormalizedF64 {
 
     /// Creates a [`NormalizedF64`] by dividing the given value by 255.
     #[inline]
-    pub fn new_u8(n: u8) -> Self {
-        NormalizedF64(FiniteF64(f64::from(n) / 255.0))
+    pub const fn new_u8(n: u8) -> Self {
+        NormalizedF64(FiniteF64(n as f64 / 255.0))
     }
 
     /// Creates a [`NormalizedF64`] by dividing the given value by 65535.
     #[inline]
-    pub fn new_u16(n: u16) -> Self {
-        NormalizedF64(FiniteF64(f64::from(n) / 65535.0))
+    pub const fn new_u16(n: u16) -> Self {
+        NormalizedF64(FiniteF64(n as f64 / 65535.0))
     }
 
     /// Returns the value as a primitive type.
@@ -645,13 +645,13 @@ impl NormalizedF64 {
 
     /// Returns the value as a [`u8`].
     #[inline]
-    pub fn to_u8(&self) -> u8 {
+    pub const fn to_u8(&self) -> u8 {
         ((self.0).0 * 255.0 + 0.5) as u8
     }
 
     /// Returns the value as a [`u16`].
     #[inline]
-    pub fn to_u16(&self) -> u16 {
+    pub const fn to_u16(&self) -> u16 {
         ((self.0).0 * 65535.0 + 0.5) as u16
     }
 }
